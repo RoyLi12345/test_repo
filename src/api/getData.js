@@ -5,3 +5,11 @@ import request from "@/config.js/axios";
 
 // 获取所有品牌分类
 export const brandList = await request('/getBrandList')
+
+//登录
+export const login = data => request('/login',data,'POST')
+
+//注册
+export const register = data => request('/register',data,'POST')
+
+

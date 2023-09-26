@@ -35,9 +35,9 @@
 
             <ul class="topNav-right">
                 
-                    <li> 登录 </li>
+                    <li @click="push('/login')">登录</li>
                     <span>|</span>
-                    <li>注册</li>
+                    <li @click="push('/login')">注册</li>
                     <span>|</span>
                     <li>消息通知</li>
             </ul>        
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import router  from '@/router';
+import { nextTick } from 'vue';
 export default {
     data(){
         return{
@@ -72,6 +74,13 @@ export default {
 
                 }, 1000);
             }
+        },
+
+        push(path){
+
+            nextTick(()=>{
+                router.push(path)
+            })
         }
     },
     mounted(){

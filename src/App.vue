@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <top-nav></top-nav>
+    <top-nav v-if="$route.path!='/login'"></top-nav>
     <router-view></router-view>
   </div>
   

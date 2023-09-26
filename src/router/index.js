@@ -10,6 +10,11 @@ const routes = [
     redirect:'/home',
   },
   {
+    path:'/login',
+    name:'login',
+    component:()=>import('../views/login.vue')
+  },
+  {
     path: '/home',
     name: 'home',
     meta:['首页'],   //meta给面包屑导航 显示目前在第几页
@@ -39,6 +44,20 @@ const routes = [
         name: 'help',
         meta:['帮助中心'],
         component: () => import('../views/help.vue'),
+      },
+      {
+        path:'/service',
+        name:'service',
+        meta:['服务中心'],
+        component:()=>import('../views/service.vue'),
+        children:[
+          {
+            path:'/service/myOrder',
+            name:'myOrder',
+            meta:['我的订单'],
+            component:()=>import('../views/myOrder.vue')
+          }
+        ]
       }
   ]  
   }

@@ -46,7 +46,7 @@ export default {
       width: 100%!important;
       width: 1226px;
       height: 40px;
-      background-color: rgb(245,245,245);
+      background-color: rgb(245,245,245)!important;
     }
     .navMenu span{
       line-height: 40px;

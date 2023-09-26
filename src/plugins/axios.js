@@ -15,6 +15,7 @@ let config = {
 };
 
 const _axios = axios.create(config);
+axios.defaults.baseURL = 'http://www.mallapi.com/api'
 
 _axios.interceptors.request.use(
   function(config) {
