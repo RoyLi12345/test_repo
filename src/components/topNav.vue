@@ -12,7 +12,7 @@
                 <span>|</span>
                 <li>社区</li>
                 <span>|</span>
-                <li>在线客服</li>
+                <li @click="goTo('/customerService/call')">在线客服</li>
             </ul>
 
             <div class="topNav-cart">
@@ -34,12 +34,42 @@
            
 
             <ul class="topNav-right">
-                
-                    <li @click="push('/login')">登录</li>
+
+                <div v-if="!token">
+                    <li @click="push(0)">登录</li>
                     <span>|</span>
-                    <li @click="push('/login')">注册</li>
+                    <li @click="push(1)">注册</li>
                     <span>|</span>
-                    <li>消息通知</li>
+                    <li>我的订单</li>
+                </div>
+
+                <div v-else>
+                    <li class="nickNameLabel">
+                        <span>{{ nickName }} </span>
+                        <i class="el-icon-arrow-down"></i>
+
+                        <div>
+                            <ul>
+                                <li @click="goTo('/service/myOrder')">
+                                    个人中心
+                                </li>
+                                <li @click="goTo('/service/myInfo')">
+                                   我的账号
+                                </li>
+                                <li @click="goTo('/service/myAddress')">
+                                   查看收货地址
+                                </li>
+                                <li @click="logOut">
+                                    退出登录
+                                </li>
+                            </ul>
+                        </div>
+                        
+                    </li>
+                    <span style="margin-left: 0;">|</span>
+                    <li>我的订单</li>
+                </div>
+                    
             </ul>        
                 
                 
@@ -52,8 +82,11 @@
 
 <script>
 import router  from '@/router';
+import {logOutHandler} from '@/utils/commonFunc.js'
 import { nextTick } from 'vue';
+import { mapState } from 'vuex';
 export default {
+    mixins:[logOutHandler],
     data(){
         return{
             cartNum:0,
@@ -76,14 +109,27 @@ export default {
             }
         },
 
-        push(path){
+        push(index){
 
-            nextTick(()=>{
-                router.push(path)
+            this.$router.push({
+                name: 'login',
+                params: {
+                    index: index
+                }
             })
-        }
+        },
+
+        //去哪页
+        goTo(path){
+
+            if(this.$route.path == path){
+                return
+            }
+            router.push(path)
+        },
     },
     mounted(){
+
         const cartContainer = document.querySelector('.topNav-cart');
         const cartHover = cartContainer.querySelector('.cartHover');
 
@@ -93,6 +139,9 @@ export default {
             this.animated = false
 
         });
+    },
+    computed:{
+        ...mapState(['token','nickName'])
     }
 
 }
@@ -106,6 +155,61 @@ export default {
         list-style: none;
         cursor: pointer;
         display: inline;
+    }
+
+    .nickNameLabel{
+        position: relative;
+        left: 3px;
+        width: 110px;
+        display: block;
+        float: left;
+        text-align: center;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .nickNameLabel div{
+        position: absolute;
+        overflow: hidden;
+        /* transform: translateY(-160px); */
+        /* transform: translateY(0); */
+        transition: height 0.4s ease-in-out;
+        height: 0px;
+        z-index: 9;
+    }
+    .nickNameLabel div li{
+        color: black;
+    }
+    .nickNameLabel ul{
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        width: 100%;
+    }
+    .nickNameLabel ul li{
+        width: 110px;
+    }
+    .nickNameLabel i{
+        margin-left: 5px;
+    }
+
+    .nickNameLabel:hover div{
+        height: 300px;
+    }
+    .nickNameLabel:hover{
+        background-color: #fff;
+        color: #ff6700!important;
+    }
+
+    .nickNameLabel:hover div ul li{
+        color: black;
+    }
+    .nickNameLabel div ul li:hover{
+        color: #ff6700!important ;
+        background-color: #f5f5f5;
+    }
+
+    .nickNameLabel div ul li:hover{
+        color: #ff6700;
     }
 
     .iconNull{

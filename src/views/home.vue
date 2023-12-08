@@ -1,17 +1,32 @@
 <template>
-  <div class="home" :class="$route.matched[1] == 'service'? 'gray':'white'">
 
-    <!-- 导航栏 -->
-    <div class="header-nav">
+    <!-- 主页/首页 -->
+
+  <div class="home" :class="$route.matched[1].name == 'service'? 'gray':'white'">
+
+    <!--  首页、全部分类...... 导航栏  -->
+    <div style="background-color: white;">
+    <div class="header-nav" style="background-color: rgb(255, 255,255);">
       <div class="logo">
           <img src="../assets/logo.png" alt="">
       </div>
-      <ul class="navUl">
+
+      <ul class="navUl" v-if="currentLogin">
         <li v-for="(item) in navData" :key="item.path">
           <router-link v-if="item.path!='null'" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
           <a href="javascript:;" v-else class="hoverLink">{{ item.label }}</a>
         </li>
       </ul>
+
+      <ul class="navUl" v-else>
+        <li v-for="(item) in navData" :key="item.path" v-if="!item.requireLogin">
+          <router-link v-if="item.path!='null' && !item.requireLogin" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
+          <router-link v-else-if="item.path!='null' && logined" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
+          <a href="javascript:;" v-else-if="item.path=='null'" class="hoverLink">{{ item.label }}</a>
+        </li>
+      </ul>
+
+
       <itemH class="goods-box" :class="{ 'show': showGoodsBox }"></itemH>
       <div class="searchBar">
         <el-input
@@ -23,15 +38,24 @@
       </div>
       
     </div>
+  </div>
+  <!-- -->
 
-    <!-- 跟进当前导航组件  ui组件面包屑 -->
+  <div class="login-notification" v-if="logined === showLoginNotify">
+    <span>为方便您购买，请提前登录</span>
+    <router-link to="/login">立即登录</router-link>
+    <i class="el-icon-close" @click="showLoginNotify = true"></i>
+  </div>
+
+    <!-- 导航条下面的 ui组件面包屑 首页>全部分类>.... -->
     <navMenu></navMenu>
     <!--  -->
     
-    <!-- 主体部分 --> 
+    <!-- 主体部分  根据上边的导航栏 展示内容 --> 
     <div :class="$route.matched[1].name == 'service'?'':'content'" class="contentBox">
       <router-view></router-view>
     </div>
+    <!--  -->
 
 
 
@@ -81,10 +105,11 @@
 import {transition} from 'vue2-transitions'
 import itemH from '../components/item.vue'
 import navMenu from '../components/navMenu.vue'
-import { brandList } from '@/api/getData'
 import $ from 'jquery'
-
 import store from '../store/index.js'
+
+
+import { mapMutations, mapState } from 'vuex'
 export default {
   data(){
     return{
@@ -93,31 +118,44 @@ export default {
       searchValue:'',  //搜索关键字
       currentNav:'',  //当前导航索引 
       showGoodsBox:false, //下拉商品显示状态
+      currentLogin:false,
+      showLoginNotify:false,
       //首页导航条数组
       navData:[           
         {
           label:'首页',
-          path:'/index'
+          path:'/index',
+          requireLogin:false
         },
         {
           label:'全部分类',
-          path:'/category'
-        },
-        {
-          label:'新品上线',
-          path:'null'
+          path:'/category',
+          requireLogin:true
         },
         {
           label:'限时秒杀',
-          path:'/limited'
+          path:'/limited',
+          requireLogin:false
+        },
+        {
+          label:'新品上线',
+          path:'null',
+          requireLogin:false
         },
         {
           label:'帮助中心',
-          path:'/help'
+          path:'/help',
+          requireLogin:false
         },
         {
-          label:'服务中心',
-          path:'/service'
+          label:'个人中心',
+          path:'/service',
+          requireLogin:true
+        },
+        {
+          label:'售后服务',
+          path:'/customerService',
+          requireLogin:true
         }
       ] 
     }
@@ -126,12 +164,15 @@ export default {
 
   },
   computed: {
+    ...mapState(['token','logined']),
     currentPlaceholder() {
       return this.searchArr[this.currentIndex];
     },
+    
+    // ...mapState(['token'])
   },
   methods:{
-    
+    ...mapMutations(['updateServiceIndex']),
     startTimer(){
       setInterval(() => {
         this.currentIndex = (this.currentIndex + 1) % this.searchArr.length;
@@ -139,7 +180,6 @@ export default {
     },
 
     init(){
-
       this.$router.beforeEach(async(to,from,next)=>{
 
           if(to.path == '/login'){
@@ -147,6 +187,11 @@ export default {
               return
           }else{
               this.currentNav = to.matched[1].path
+
+              if(to.matched[1].name == 'service'){
+                this.updateServiceIndex(to.matched[2].name)
+              }
+
               next()
           }
 
@@ -165,6 +210,7 @@ export default {
         }
       });
 
+     
     
     }
   },
@@ -174,28 +220,57 @@ export default {
   },
   async mounted(){
 
-    this.init()
-    this.currentNav = this.$route.matched[1].path
-    this.startTimer()
-
-    console.log(store.state.token)
-
+    this.currentLogin = this.logined
+    const loginState = new BroadcastChannel('loginState')
     
+    this.init()
+    this.startTimer() //右上角搜索框 placeholder 值 自动切换
+    this.currentNav = this.$route.matched[1].path
 
+    loginState.addEventListener('message',e=>{
+      this.currentLogin = e.data
+
+    })
+
+   
   },
 }
 </script>
 
 <style scoped>
 
+.login-notification{
+  background-color: rgba(247, 247, 247, .5);
+    width: 100%;
+    text-align: center;
+    height: 48px;
+    line-height: 48px;
+    color: #333;
+    font-size: 15px;
+}
+.login-notification:hover{
+  background: #f7f7f7;
+}
+.login-notification span:nth-child(1){
+  margin-right: 20px;
+}
+.login-notification a{
+  font-size: 15px;
+  color: #FF6700;
+}
+.login-notification i{
+  margin-left: 10px;
+  cursor: pointer;
+}
+.login-notification i:hover{
+  color: #FF6700;
+}
 .goods-box{
   
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 0.3s ease-in-out;
 }
-
-
 
     .content{
       width: 1226px;
@@ -207,10 +282,6 @@ export default {
     li{
       list-style-type: none;
     }
-
-    /* .header-nav{
-      background-color: rgb(255,255,255);
-    } */
 
     .gray{
       background:rgb(245,245,245)!important;
@@ -228,11 +299,6 @@ export default {
       font-size: 17px;
     }
     .home{
-      /* margin: auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center; */
       min-width: 1226px; 
       background: #F5F5F5;
     }

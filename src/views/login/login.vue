@@ -51,6 +51,8 @@
               <!-- tabContent -->
               <div class="tabContent">
                 <!-- tabContentPhone -->
+
+                <!-- 登录 -->
                 <transition name="my-transition">
                   <el-form
                     ref="loginForm"
@@ -70,6 +72,7 @@
                           v-model="loginForm.password"
                           type="password"
                           show-password
+                          @keyup.enter.native="submitForm('loginForm',$event)"
                         ></el-input>
                       </el-form-item>
                       <el-form-item>
@@ -84,6 +87,8 @@
                   </el-form>
                 </transition>
 
+
+                <!-- 注册 -->
                 <transition>
                   <el-form
                     ref="registerForm"
@@ -92,6 +97,12 @@
                     v-if="tabIndex == 1"
                   >
                     <div class="tabcont tabContentPhone active">
+                      <el-form-item label="昵称" prop="nickName">
+                        <el-input
+                          v-model="registerForm.nickName"
+                          clearable
+                        ></el-input>
+                      </el-form-item>
                       <el-form-item label="用户名" prop="username">
                         <el-input
                           v-model="registerForm.username"
@@ -116,6 +127,7 @@
                         <el-input
                           v-model="registerForm.email"
                           clearable
+                          @keyup.enter.native="submitForm('registerForm',$event)"
                         ></el-input>
                       </el-form-item>
                       <el-form-item>
@@ -197,10 +209,11 @@
 
 <script>
 import $ from "jquery";
-import '../plugins/element.js'
-import "../assets/css/animate.css";
-import { login,register } from "../api/getData.js";
-import store from "../store/index.js";
+import '../../plugins/element.js'
+import "@/assets/css/animate.css";
+import { login,register } from "../../api/getData.js";
+import store from "../../store/index.js";
+import { mapMutations, mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -214,6 +227,7 @@ export default {
         password: "",
         confirmPassword: "",
         email: "",
+        nickName:""
       },
       loginRules: {
         //验证
@@ -243,10 +257,20 @@ export default {
           { required: true, message: "邮箱号码不能为空", trigger: "blur" },
           { validator: this.validateEmail, trigger: "blur" },
         ],
+        nickName: [
+          { required: true, message: "昵称不能为空", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
   methods: {
+    ...mapMutations(['updateUserInfo','updateLogined']),
     validateConfirmPassword(rule, value, callback) {
       if (value !== this.registerForm.password) {
         return callback(new Error("两次密码输入不一致"));
@@ -282,12 +306,17 @@ export default {
                 message: "登录成功!",
                 type: "success",
               });
-              store.commit('updateToken',res.data.access_token)
+              //本地存储token
+              // localStorage.setItem('token',res.data.access_token)
+              // localStorage.setItem('userId',this.loginForm.username)
+              this.updateLogined(true)
+              this.updateUserInfo({username:this.loginForm.username, nickName: 777, token:res.data.access_token})
+
               this.$router.push("/index");
             } else {
               this.$notify({
                 title: "失败",
-                message: "账号或密码有误!",
+                message: res.data.error,
                 type: "error",
               });
             }
@@ -298,7 +327,8 @@ export default {
               username: this.registerForm.username,
               password: this.registerForm.password,
               password_confirmation:  this.registerForm.confirmPassword,
-              email:  this.registerForm.email
+              email:  this.registerForm.email,
+              nickName: this.registerForm.nickName
             })
 
             if (res.code == 200) {
@@ -308,12 +338,15 @@ export default {
                 type: "success",
               });
 
-              store.commit('updateToken',res.data.access_token)
+              //本地存储token
+              // localStorage.setItem('token',res.data.access_token)
+              // store.commit('updateToken',res.data.access_token)
+              this.updateUserInfo({username:this.loginForm.username, nickName: this.registerForm.nickName, token:res.data.access_token})
               this.$router.push("/index");
             } else {
               this.$notify({
                 title: "失败",
-                message: "账号或密码有误!",
+                message: "注册失败!",
                 type: "error",
               });
             }
@@ -328,6 +361,14 @@ export default {
     },
   },
   mounted() {
+
+
+    if(this.$route.params.index){
+      this.tabIndex = this.$route.params.index
+    }
+
+    $('.tabBoxSwitchUl li').eq(this.tabIndex).addClass("tab-active").siblings().removeClass('tab-active')
+
     var that = this;
     $(".tabBoxSwitchUl").on("click", "li", function () {
       $("ul li").removeClass("tab-active");
@@ -399,8 +440,10 @@ input {
 
 .loginBtn {
   width: 100%;
-  height: 35px;
+  height: 40px;
   margin-top: 20px;
+  background-color: #ff5c00;
+  border: none;
 }
 
 .el-form-item{

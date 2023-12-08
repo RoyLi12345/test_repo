@@ -35,8 +35,6 @@ export default {
     },
     mounted(){
        this.matchPath(this.$route.matched) 
-
-       console.log(this.lists)
     }
 }
 </script>

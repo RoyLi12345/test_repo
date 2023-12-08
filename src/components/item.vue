@@ -137,6 +137,7 @@ li{
     align-items: center;
     width: 30%;
     padding: 15px;
+    cursor: pointer;
 }
 
 .goods-box ul li:not(:first-child)::before{
