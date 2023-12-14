@@ -108,7 +108,8 @@ li{
     list-style-type: none;
 }
 .goods-box{
-    height: 250px;
+    /* transition: height 0.4s ease-in-out; */
+    /* height: 250px; */
     border-top: 1px solid #e0e0e0;
     /* border-bottom:1px solid red; */
     background: #fff;

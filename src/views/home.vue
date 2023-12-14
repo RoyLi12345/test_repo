@@ -11,23 +11,61 @@
           <img src="../assets/logo.png" alt="">
       </div>
 
-      <ul class="navUl" v-if="currentLogin">
-        <li v-for="(item) in navData" :key="item.path">
-          <router-link v-if="item.path!='null'" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
-          <a href="javascript:;" v-else class="hoverLink">{{ item.label }}</a>
+      <ul class="navUl">
+
+        <li>
+          <router-link to="/index" :class="{ selected: currentPage === 'index' }">首页</router-link>
+        </li>
+
+        <li>
+          <router-link to="/category" :class="{ selected: currentPage === 'category' }">全部分类</router-link>
+        </li>
+
+        <li>
+          <router-link to="/limited">限时秒杀</router-link>
+        </li>
+
+        <div style="float: left;" class="itemBox">
+
+          <li>
+              <a href="javascript:;">小米手机</a>
+          </li>
+
+          <li>
+              <a href="javascript:;">Redmi手机</a>
+          </li>
+
+          <li>
+              <a href="javascript:;">电视</a>
+          </li>
+
+          <li>
+              <a href="javascript:;">笔记本</a>
+          </li>
+
+          <itemH class="goods-box"></itemH>
+
+        </div>
+       
+
+        <!-- <li>
+          <router-link to="/help">帮助中心</router-link>
+        </li> -->
+
+        <li>
+          <router-link to="/service" :class="{ selected: currentPage === 'service' }" >个人中心</router-link>
+        </li>
+
+        <li>
+          <router-link to="/customerService" :class="{ selected: currentPage === 'customerService' }">售后服务</router-link>
         </li>
       </ul>
 
-      <ul class="navUl" v-else>
-        <li v-for="(item) in navData" :key="item.path" v-if="!item.requireLogin">
-          <router-link v-if="item.path!='null' && !item.requireLogin" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
-          <router-link v-else-if="item.path!='null' && logined" :class="item.path == currentNav?'selected':''" :to="item.path">{{ item.label }}</router-link>
-          <a href="javascript:;" v-else-if="item.path=='null'" class="hoverLink">{{ item.label }}</a>
-        </li>
-      </ul>
 
 
-      <itemH class="goods-box" :class="{ 'show': showGoodsBox }"></itemH>
+      
+
+
       <div class="searchBar">
         <el-input
           :placeholder="currentPlaceholder"
@@ -52,8 +90,13 @@
     <!--  -->
     
     <!-- 主体部分  根据上边的导航栏 展示内容 --> 
-    <div :class="$route.matched[1].name == 'service'?'':'content'" class="contentBox">
-      <router-view></router-view>
+    <div :class="$route.matched[1].name == 'service' || $route.matched[1].name == 'itemCategory' ?'':'content'" class="contentBox">
+     
+      <keep-alive include="customerService">
+        <router-view></router-view>
+      </keep-alive>
+        
+      
     </div>
     <!--  -->
 
@@ -116,103 +159,38 @@ export default {
       searchArr:['全部商品','红米','冰箱','手机','空调','洗衣机','电视','笔记本'],
       currentIndex:0,
       searchValue:'',  //搜索关键字
-      currentNav:'',  //当前导航索引 
       showGoodsBox:false, //下拉商品显示状态
       currentLogin:false,
       showLoginNotify:false,
-      //首页导航条数组
-      navData:[           
-        {
-          label:'首页',
-          path:'/index',
-          requireLogin:false
-        },
-        {
-          label:'全部分类',
-          path:'/category',
-          requireLogin:true
-        },
-        {
-          label:'限时秒杀',
-          path:'/limited',
-          requireLogin:false
-        },
-        {
-          label:'新品上线',
-          path:'null',
-          requireLogin:false
-        },
-        {
-          label:'帮助中心',
-          path:'/help',
-          requireLogin:false
-        },
-        {
-          label:'个人中心',
-          path:'/service',
-          requireLogin:true
-        },
-        {
-          label:'售后服务',
-          path:'/customerService',
-          requireLogin:true
-        }
-      ] 
+      currentPage:'index',  //当前页面索引
     }
   },
   watch:{
 
   },
   computed: {
+
     ...mapState(['token','logined']),
     currentPlaceholder() {
       return this.searchArr[this.currentIndex];
     },
+
+  },
+  watch:{
     
-    // ...mapState(['token'])
+    $route(to,from){
+      this.currentPage = to.matched[1].name
+    }
+
   },
   methods:{
-    ...mapMutations(['updateServiceIndex']),
     startTimer(){
       setInterval(() => {
         this.currentIndex = (this.currentIndex + 1) % this.searchArr.length;
       }, 5000);
     },
 
-    init(){
-      this.$router.beforeEach(async(to,from,next)=>{
 
-          if(to.path == '/login'){
-              next()
-              return
-          }else{
-              this.currentNav = to.matched[1].path
-
-              if(to.matched[1].name == 'service'){
-                this.updateServiceIndex(to.matched[2].name)
-              }
-
-              next()
-          }
-
-      })
-
-
-
-      $('.navUl li').eq(2).on({
-          mouseover: ()=> {
-          // mouseover 事件处理逻辑
-          this.showGoodsBox = true;
-        },
-          mouseleave: ()=> {
-          // mouseleave 事件处理逻辑
-          this.showGoodsBox = false;
-        }
-      });
-
-     
-    
-    }
   },
   components:{
     navMenu,
@@ -223,14 +201,14 @@ export default {
     this.currentLogin = this.logined
     const loginState = new BroadcastChannel('loginState')
     
-    this.init()
     this.startTimer() //右上角搜索框 placeholder 值 自动切换
-    this.currentNav = this.$route.matched[1].path
+
+    this.currentPage = this.$route.matched[1].name
 
     loginState.addEventListener('message',e=>{
       this.currentLogin = e.data
-
     })
+
 
    
   },
@@ -266,11 +244,16 @@ export default {
   color: #FF6700;
 }
 .goods-box{
-  
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform 0.3s ease-in-out;
+  height: 0;
+  overflow: hidden;
+  transition: height .4s ease-in-out;
 }
+
+.itemBox:hover .goods-box{
+  /* height: auto;  auto是没有动画的 */
+  height: 250px; /* 设置正常的高度 */
+}
+
 
     .content{
       width: 1226px;
@@ -334,24 +317,24 @@ export default {
     }
 
     .header-nav ul{
-      padding: 10px 0 0 0;
+      /* padding: 10px 0 0 0; */
       margin-left: 60px;
       float: left;    
     }
 
-    .goods-box:hover,.hoverLink:hover .goods-box,.show{
+    /* .goods-box:hover,.hoverLink:hover .goods-box,.show{
       transform: scaleY(1);
     }
 
     .show{
       transform: scaleY(1);
-    }
+    } */
 
 
     .header-nav ul li{
       float:left;
       margin-left: 16px;
-      line-height: 40px;
+      line-height: 80px;
       height: 70px;
     }
 

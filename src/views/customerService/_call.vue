@@ -4,32 +4,17 @@
   <div class="content">
 
     <div class="check">
-        <el-button type="danger" v-if="dialogContent!=''" @click="previousDialog" plain>上一次对话👉</el-button>
+        <el-button type="danger" @click="goBack" plain>返回</el-button>
     </div>
 
+    <span><strong>*注: 当前对话已结束，只允许查看 不做任何功能 如需聊天请返回</strong></span>
 
     <!-- 对话内容 -->
-    <div class="dialogContent" ref="dialogContent">
-        
-
-    <!-- 客服对话框 -->
-    <div class="kefu-dialog">
-        <img src="@/assets/kefupfp.png" width="40" height="40" alt="">
-        <div class="chatInfo">
-            <span>您好，智能助理为您服务。</span>
-        </div>
-    </div>
-    
-    
-    <!--  -->
-
-    <!-- 猜你想问 -->
-    <question :questionList="questionList"></question>
-    <!--  -->
+    <div class="dialogContent" ref="dialogContent" v-html="dialogContent">
     
     </div>
     <!--  -->
-
+    
     
 
   </div>
@@ -113,21 +98,18 @@ export default {
         answer
     },
     mounted(){
-        this.currentState = this.$refs.dialogContent.innerHTML
+
+        
     },
     computed:{
         ...mapState(['dialogContent'])
     },
     methods:{
 
-        previousDialog(){
-            router.push('/customerService/_call')
+        goBack(){
+            router.push('/customerService/call')   
         }
 
-    },
-    beforeDestroy(){
-
-        store.commit('updateDialogContent',this.$refs.dialogContent.innerHTML) 
     }
 
 }

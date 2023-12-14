@@ -214,7 +214,9 @@ import "@/assets/css/animate.css";
 import { login,register } from "../../api/getData.js";
 import store from "../../store/index.js";
 import { mapMutations, mapState } from 'vuex'
+import { saveUserDataHandler } from "@/utils/commonFunc";
 export default {
+  mixins:[saveUserDataHandler],
   data() {
     return {
       tabIndex: 0, // 显示状态  0 -> 登录框 || 1 -> 注册框
@@ -270,6 +272,13 @@ export default {
     };
   },
   methods: {
+    loginSuccessHandler(result){
+          //----登录/注册 成功 ? 则请求用户信息 存入vuex 返回首页
+          this.updateLogined(true)
+          store.commit('updateToken',result.data.access_token)
+          this.saveUserData(result.data.id)
+          this.$router.push("/index");
+    },
     ...mapMutations(['updateUserInfo','updateLogined']),
     validateConfirmPassword(rule, value, callback) {
       if (value !== this.registerForm.password) {
@@ -306,13 +315,10 @@ export default {
                 message: "登录成功!",
                 type: "success",
               });
-              //本地存储token
-              // localStorage.setItem('token',res.data.access_token)
-              // localStorage.setItem('userId',this.loginForm.username)
-              this.updateLogined(true)
-              this.updateUserInfo({username:this.loginForm.username, nickName: 777, token:res.data.access_token})
 
-              this.$router.push("/index");
+              this.loginSuccessHandler(res)
+           
+
             } else {
               this.$notify({
                 title: "失败",
@@ -338,11 +344,12 @@ export default {
                 type: "success",
               });
 
-              //本地存储token
-              // localStorage.setItem('token',res.data.access_token)
-              // store.commit('updateToken',res.data.access_token)
-              this.updateUserInfo({username:this.loginForm.username, nickName: this.registerForm.nickName, token:res.data.access_token})
-              this.$router.push("/index");
+             
+
+              this.loginSuccessHandler(res)
+              // this.updateUserInfo({userId:res.data.id, nickName: this.registerForm.nickName, token:res.data.access_token})
+              // this.$router.push("/index");
+
             } else {
               this.$notify({
                 title: "失败",

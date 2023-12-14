@@ -26,9 +26,11 @@ export default {
             categoryData:[]
         }
     },
-    async mounted(){
+    async created(){
         const response = await brandList(store.state.token)
         this.categoryData = response.data
+    },
+    async mounted(){
 
     }
 }

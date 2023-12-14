@@ -4,6 +4,15 @@ module.exports = defineConfig({
   devServer:{
     open:true,
     historyApiFallback: true,
-    allowedHosts:"all"
+    allowedHosts:"all",
+    proxy:{
+      '/api':{
+        target:'http://www.davili.cn',
+        changeOrigin:true,
+        pathRewrite:{
+          '/api':''
+        }
+      }
+    }
   }
 })

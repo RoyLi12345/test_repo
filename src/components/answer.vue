@@ -113,6 +113,20 @@
             </span>
 
 
+              <span v-else-if="answer == 13">
+
+                <strong>物流查询请走以下程序:</strong>
+                <br>通过点击 <strong>售后服务</strong>><strong>快递查询</strong>，随后输入快递单号即可查询
+                <br>📍注: 不是所有快递订单都支持公开，若您的快递查询不到，请不要灰心，试着联系客服
+
+
+                <br>请点<a @click="goTo('/deliverySearch')">点击这里</a>查看物流情况
+
+                <br>📍注: 不是所有快递订单都支持公开，若您的快递查询不到，请不要灰心，试着联系客服
+
+            </span>
+
+
         </div>
     </div>
 

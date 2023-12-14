@@ -11,8 +11,8 @@
                 <li>服务中心</li>
                 <span>|</span>
                 <li>社区</li>
-                <span>|</span>
-                <li @click="goTo('/customerService/call')">在线客服</li>
+                <span v-if="logined">|</span>
+                <li @click="goTo('/customerService/call')" v-if="logined">在线客服</li>
             </ul>
 
             <div class="topNav-cart">
@@ -141,7 +141,7 @@ export default {
         });
     },
     computed:{
-        ...mapState(['token','nickName'])
+        ...mapState(['logined','token','nickName'])
     }
 
 }

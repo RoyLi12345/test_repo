@@ -9,19 +9,19 @@
       <div class="box-topNav">
         <ul>
           <li>
-            <router-link :class="comName=='myOrder'?'active':''" data-index="myOrder" to="/service/myOrder">全部有效订单</router-link>
+            <router-link  :class="{ active: comName === 'myOrder' }" data-index="myOrder" to="/service/myOrder">全部有效订单</router-link>
           </li>
           <span>|</span>
           <li>
-            <router-link :class="comName=='unPaid'?'active':''" to="/service/unPaid"  data-index="unPaid">待支付</router-link>
+            <router-link :class="{ active: comName === 'unPaid' }" to="/service/unPaid"  data-index="unPaid">待支付</router-link>
           </li>
           <span>|</span>
           <li>
-            <router-link :class="comName=='unReceived'?'active':''" to="/service/unReceived" data-index="unReceived">待收货</router-link>
+            <router-link :class="{ active: comName === 'unReceived' }" to="/service/unReceived" data-index="unReceived">待收货</router-link>
           </li>
           <span>|</span>
           <li>
-            <router-link :class="comName=='recovery'?'active':''" to="/service/recovery" data-index="recovery">订单回收站</router-link>
+            <router-link :class="{ active: comName === 'recovery' }" to="/service/recovery" data-index="recovery">订单回收站</router-link>
           </li>
         </ul>
         <div></div>

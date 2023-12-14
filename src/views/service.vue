@@ -10,7 +10,7 @@
                 <div v-for="(item) in navData" :key="item.title">
                     <li class="titleLi">{{ item.title }}</li>
                     <li v-for="i in item.routes" :key="i.path">
-                        <router-link v-if="i.path" :to="i.path" :class="serviceIndex == i.path.split('/')[2] ?'active':''" >{{i.label}}</router-link>
+                        <router-link v-if="i.path" :to="i.path" :class="{active: currentPage == i.name}" >{{i.label}}</router-link>
                         
                         <!-- 退出登录按钮 -->
                             <a href="javascript:;" @click="logOut" v-else>{{i.label}}</a>
@@ -23,7 +23,13 @@
 
         <!-- 右侧内容 -->
         <div class="service-right">
+
+
+            <!-- 对myAddress组件进行缓存 其他的正常运行 -->
+          <keep-alive include="myAddress,myInfo">
             <router-view></router-view>
+          </keep-alive>
+
         </div>
         <!--  -->
         
@@ -47,11 +53,13 @@ export default {
                     routes:[
                         {
                             label:'我的订单',
-                            path:'/service/myOrder'
+                            path:'/service/myOrder',
+                            name:'myOrder'
                         },
                         {
                             label:'我的购物车',
-                            path:'/service/myCart'
+                            path:'/service/myCart',
+                            name:'myCart'
                         }
                     ]
                 },
@@ -60,15 +68,18 @@ export default {
                     routes:[
                         {
                             label:'我的个人中心',
-                            path:'/service/myProfile'
+                            path:'/service/myProfile',
+                            name:'myProfile'
                         },
                         {
                             label:'喜欢的商品',
-                            path:'/service/myItem'
+                            path:'/service/myItem',
+                            name:'myItem'
                         },
                         {
                             label:'收货地址',
-                            path:'/service/myAddress'
+                            path:'/service/myAddress',
+                            name:'myAddress'
                         }
                     ]
                 },
@@ -77,11 +88,13 @@ export default {
                     routes:[
                         {
                             label:'个人信息',
-                            path:'/service/myInfo'
+                            path:'/service/myInfo',
+                            name:'myInfo'
                         },
                         {
                             label:'修改密码',
-                            path:'/service/changePassword'
+                            path:'/service/changePassword',
+                            name:'changePassword'
                         },
                         {
                             label:'注销账号',
@@ -100,10 +113,21 @@ export default {
     },
     mounted(){
 
+        this.currentPage = this.$route.name
         //初始加载页面  左侧路由索引 指定到这个页面
-        this.updateServiceIndex(this.$route.path.split('/')[2])
+        // this.updateServiceIndex(this.$route.path.split('/')[2])
         
-    }
+    },
+    computed:{
+        currentPage:{
+            get(){
+                return this.$route.name
+            },
+            set(value){
+                return value
+            } 
+        }
+    },
 }
 </script>
 

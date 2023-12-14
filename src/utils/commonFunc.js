@@ -2,6 +2,7 @@ import { mapMutations } from "vuex";
 import store from "@/store";
 import router from "@/router";
 import { jwtDecode } from "jwt-decode";
+import { getUserData } from "@/api/getData";
 
 //通用函数  任意vue组件都可以调用
 
@@ -23,7 +24,8 @@ export const logOutHandler = {
                 //删除用户信息
               
                 this.updateLogined(false)
-                this.updateUserInfo({username:'', nickName: '', token:''})
+                store.commit('updateToken','')
+                this.updateUserInfo({userId:'', userName:'',nickName:'',email:''})
 
                 if(this.$route.path == '/index'){
                     return
@@ -92,5 +94,25 @@ export const check_tokenHandler = {
     }
 
 }
+
+//重新获取用户信息并存入vuex
+export const saveUserDataHandler = {
+
+    methods:{
+
+        async saveUserData(id){
+            const user = await getUserData({id:id})
+            store.commit('updateUserInfo',
+                {userId:user.data.id, userName:user.data.username,nickName:user.data.nickName,email:user.data.email}
+            )
+        }
+
+    }
+
+}
+ 
+
+
+
 
 

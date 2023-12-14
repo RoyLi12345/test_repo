@@ -1,29 +1,41 @@
 <template>
   <div class="">
+    <!-- top-nav 组件渲染顶部黑色条 -->
     <top-nav v-if="$route.path != '/login' && $route.path != '/404'"></top-nav>
-    <router-view></router-view>
+
+      <router-view></router-view>
+     
+   
   </div>
 </template>
 
 <script>
+
 import topNav from "./components/topNav.vue";
 import store from "./store";
 import router from "./router";
-//引用检查token函数 (通用函数)
-import {check_tokenHandler} from '@/utils/commonFunc'
+//引用检查token函数 和 获取用户信息函数 (通用函数)
+import {check_tokenHandler, saveUserDataHandler} from '@/utils/commonFunc'
 
 export default {
   name: "app",
-  mixins:[check_tokenHandler],
+  mixins:[check_tokenHandler,saveUserDataHandler],
   components: {
     topNav,
   },
   mounted() {
 
-    //初次登录 检查token情况
+    //----初次登录 检查token情况
     this.check_token()
-    //----
+    //----加载路由主体结构
     this.initRouter()
+    //----获取用户信息并存储到vuex
+
+    if(store.state.userId){
+      this.saveUserData(store.state.userId)
+    }
+
+    
 
   },
   methods: {

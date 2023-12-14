@@ -2,6 +2,8 @@ import store from '@/store'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+const myAddressComp = import('../views/service/PersonalModule/myAddress.vue')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -52,6 +54,18 @@ const routes = [
         component:()=>import('../views/goods.vue')
       },
       {
+        path:'/deliverySearch',
+        name:'deliverySearch',
+        meta:['物流查询'],
+        component:()=>import('../views/deliverySearch.vue')
+      },
+      {
+        path:'/itemCategory',
+        name:'itemCategory',
+        meta:['分类查找'],
+        component:()=>import('../views/itemCategory.vue')
+      },
+      {
         path:'/service',
         name:'service',
         redirect:'/service/myOrder',
@@ -87,7 +101,7 @@ const routes = [
           {
             path:'/service/myCart',
             name:'myCart',
-            meta:['我的个人中心'],
+            meta:['我的购物车'],
             component:()=>import('../views/service/PersonalModule/myCart.vue')
           },
           {
@@ -105,7 +119,9 @@ const routes = [
           {
             path:'/service/myAddress',
             name:'myAddress',
-            meta:['收货地址'],
+            meta:['收货地址', {
+              keepAlive:true
+            }],
             component:()=>import('../views/service/PersonalModule/myAddress.vue')
           },
           {
@@ -116,9 +132,9 @@ const routes = [
           },
           {
             path:'/service/changePassword',
-            name:'password',
+            name:'changePassword',
             meta:['修改密码'],
-            component:()=>import('../views/service/UserModule/password.vue')
+            component:()=>import('../views/service/UserModule/changePassword.vue')
           }
           
 
@@ -135,7 +151,13 @@ const routes = [
             name: 'call',
             meta:['联系客服'],
             component: () => import('../views/customerService/call.vue'),
-          }
+          },
+          {
+            path: '/customerService/_call',
+            name: '_call',
+            meta:['上一次对话'],
+            component: () => import('../views/customerService/_call.vue'),
+          },
         ]
       }
   ]  

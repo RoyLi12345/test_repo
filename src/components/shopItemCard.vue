@@ -111,7 +111,6 @@ export default {
 }
 .my-Cart-row div:nth-child(3){
     width: 200px;
-    text-overflow: ellipsis;
     white-space: nowrap; /* 防止换行 */
     overflow: hidden; /* 文字溢出隐藏 */
     text-overflow: ellipsis; /* 显示省略号 */

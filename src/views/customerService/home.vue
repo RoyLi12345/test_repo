@@ -20,7 +20,13 @@
                     <span class="card-text">进入个人主页，修改您的信息</span>
                 </router-link>
             </li>
-            <li></li>
+            <li>
+                <router-link to="/deliverySearch">
+                    <img src="@/assets/wuliu.png" width="100" height="66" alt="">
+                    <span class="card-title">快递查询</span>
+                    <span class="card-text">输入您的快递单号，即可查询物流哦</span>
+                </router-link>
+            </li>
             <li></li>
         </ul>
 
@@ -29,13 +35,17 @@
 
 
     <!-- 选择后对应的模块 -->
-    <router-view></router-view>
+    <keep-alive include="call">
+        <router-view></router-view>
+    </keep-alive>
+    
 
   </div>
 </template>
 
 <script>
 export default {
+    name:'customerService',
     mounted(){
        
     }
