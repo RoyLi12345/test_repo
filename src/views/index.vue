@@ -5,17 +5,17 @@
     </template>
     
     <script>
-    import {getProducts, getUserData} from '@/api/getData'
-    import Axios from 'axios'
+    import {getProducts, getUserData,getCart} from '@/api/getData'
     export default {
 
         async mounted(){
 
             const result = await getProducts()
-            console.log(result)
+            console.log(result.data)
 
             // const res = await Axios.get('http://localhost:8080/api/test.php')
             // console.log(res)
+
         }
 
         

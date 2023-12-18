@@ -88,8 +88,9 @@ export default {
 
         if(!this.isFirst){
 
+            console.log(store.state.userId)
             //获取用户信息
-            const userData = await getUserData({id: store.state.userId}) 
+            const userData = await getUserData({user_id: store.state.userId}) 
             this.userData = userData.data
 
             console.log(this.userData)

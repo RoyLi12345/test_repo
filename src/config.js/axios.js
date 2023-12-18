@@ -6,6 +6,8 @@ const baseUrl = 'http://www.mallapi.com/api'
 
 
 const request = async (url = '', data = {}, method = 'GET',Authorization = '') => {
+
+
   try {
     // 创建请求配置对象
     const requestConfig = {
@@ -14,7 +16,7 @@ const request = async (url = '', data = {}, method = 'GET',Authorization = '') =
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization':`Bearer ${Authorization}`
+        'Authorization':`Bearer ${store.state.token}`
       },
     };
 

@@ -19,7 +19,7 @@ export const getProducts = () => request('/Get_MpProducts',{},'GET')
 
 
 //获取单个用户信息
-export const getUserData = data => request('/All_User_data',data,'POST')
+export const getUserData = data => request('/user/Profile',data,'POST')
 
 
 //修改昵称和性别
@@ -40,5 +40,19 @@ export const delAddress = data => request('/deleteAddressById',data,'DELETE')
 //修改单个地址
 export const editAddress = data => request('/updateAddressById',data,'PUT')
 
+//获取我的购物车(个人)
+export const getCart = (data,token) => request('/ShopCart/getData',data,'POST')
+
+//添加购物车
+export const addCart = (data) => request('/ShopCart/add',data,'POST')
+
+//减少购物车
+export const reduceCart = (data) => request('/ShopCart/Reduce',data,'POST')
+
+//删除购物车
+export const delCart = (data) => request('/ShopCart/delete',data,'POST')
+
+//获取单个商品详细
+export const getProDetail = (data) => request('/Get_ProductDetails',data,'POST')
 
 

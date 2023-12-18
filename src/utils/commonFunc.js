@@ -101,7 +101,7 @@ export const saveUserDataHandler = {
     methods:{
 
         async saveUserData(id){
-            const user = await getUserData({id:id})
+            const user = await getUserData({user_id:id})
             store.commit('updateUserInfo',
                 {userId:user.data.id, userName:user.data.username,nickName:user.data.nickName,email:user.data.email}
             )

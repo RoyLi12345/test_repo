@@ -7,19 +7,21 @@
                 <div>
                     <img width="60" height="60" src="@/assets/phone.png" alt="">
                 </div>
-                <div>Redmi K70 12GB+256GB 墨羽</div>
-                <div>{{cardItem}}元</div>
+                <div>{{cardItem.product.title}}</div>
+                <div>{{cardItem.product.price | formatPrice}}元</div>
                 <div>
-                    <i class="el-icon-minus" @click="minusNumHandler()"></i>
-                    <span>{{itemNum}}</span>
-                    <i class="el-icon-plus" @click="addNumHandler()"></i>
+                    <i class="el-icon-minus" @click="minusNumHandler(cardItem.id)"></i>
+                    <span>{{cardItem.quantity}}</span>
+                    <i class="el-icon-plus" @click="addNumHandler(cardItem.product_id)"></i>
                 </div>
-                <div>10805元</div>
-                <div><i class="el-icon-close"></i></div>
+                <div>{{itemTotalPrice | formatPrice}}元</div>
+                <div><i class="el-icon-close" @click="delHandler(cardItem.id)"></i></div>
     </div>
 </template>
 
 <script>
+import { addCart,reduceCart,delCart } from '@/api/getData'
+import store from '@/store'
 var channel = new BroadcastChannel('cart')
 export default {
     props:['cardItem','allCheck'],
@@ -30,10 +32,23 @@ export default {
             itemPrice:120
         }
     },
+    filters:{
+
+        formatPrice(value) {
+            const intValue = Math.floor(value); // 取整数部分
+            const decimalPart = value % 1; // 取小数部分
+
+            if (decimalPart === 0) {
+                return intValue;
+             } else {
+                return intValue + decimalPart.toFixed(2).slice(-2);
+            }
+        }
+    },
     mounted(){
 
         //子向父 传值
-        this.$emit('stateHandler',+this.itemPrice,+1)
+        this.$emit('stateHandler',this.itemTotalPrice,+1)
 
         //接收频道消息 并做处理
         channel.addEventListener('message', e => {
@@ -48,11 +63,17 @@ export default {
         })
 
     },
+    computed:{
+        itemTotalPrice(){
+            return this.cardItem.product.price * this.cardItem.quantity
+        }
+    },
     methods:{
-        //增加一份商品 最多10份
-        addNumHandler(){
 
-            if(this.itemNum >= 10){
+        //增加一份商品 最多10份
+        async addNumHandler(product_id){
+
+            if(this.cardItem.quantity >= 10){
                 this.$message({
                     type: 'info',
                     message: `不能再加啦~`
@@ -60,14 +81,15 @@ export default {
                 return
             }
 
-            this.itemNum += 1
+            await addCart({user_id:store.state.userId,product_id:product_id})
+            ++this.cardItem.quantity
 
         },
 
         //减少一份商品
-        minusNumHandler(){
+        async minusNumHandler(id){
 
-            if(this.itemNum <= 1){
+            if(this.cardItem.quantity <= 1){
                 this.$message({
                     type: 'info',
                     message: `不能再减啦~`
@@ -75,8 +97,26 @@ export default {
                 return
             }
 
-            this.itemNum -= 1
+            await reduceCart({cartId:id})
+            --this.cardItem.quantity
 
+        },
+
+        //删除商品
+        delHandler(id){
+
+            this.$confirm('是否删除该商品?', '提示', {
+
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+
+                }).then(async () => {
+                    await delCart({cart_id:id})
+                    this.$emit('refresh')
+                }).catch(() => {
+                    return      
+                });
         },
 
         //当子组件的选中状态发生更改  向父组件传值记录

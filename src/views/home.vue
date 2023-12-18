@@ -52,11 +52,11 @@
           <router-link to="/help">帮助中心</router-link>
         </li> -->
 
-        <li>
+        <li v-if="logined">
           <router-link to="/service" :class="{ selected: currentPage === 'service' }" >个人中心</router-link>
         </li>
 
-        <li>
+        <li v-if="logined">
           <router-link to="/customerService" :class="{ selected: currentPage === 'customerService' }">售后服务</router-link>
         </li>
       </ul>
@@ -90,9 +90,9 @@
     <!--  -->
     
     <!-- 主体部分  根据上边的导航栏 展示内容 --> 
-    <div :class="$route.matched[1].name == 'service' || $route.matched[1].name == 'itemCategory' ?'':'content'" class="contentBox">
+    <div :class="$route.matched[1].name == 'service' || $route.matched[1].name == 'itemCategory' || $route.matched[1].name == 'index' ?'':'content'" class="contentBox">
      
-      <keep-alive include="customerService">
+      <keep-alive include="customerService,service">
         <router-view></router-view>
       </keep-alive>
         

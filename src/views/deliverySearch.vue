@@ -56,10 +56,14 @@
 
 <script>
 export default {
+    name:'deliverySearch',
     data(){
         return{
             number:''
         }
+    },
+    activated(){
+        console.log(888)
     }
 }
 </script>

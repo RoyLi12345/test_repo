@@ -23,7 +23,7 @@
 
         <div class="my-Cart">
             <!-- 循环component 将每个商品放进单个组件 -->
-            <shopItem v-for="item in myCart" @stateHandler="stateHandler" :key="item.id" :allCheck="allCheckState" :card-item="item"></shopItem>
+            <shopItem v-for="item in myCart" @stateHandler="stateHandler" @refresh="refresh" :key="item.id" :allCheck="allCheckState" :card-item="item"></shopItem>
         </div>
 
         <div class="cart-bar">
@@ -60,6 +60,8 @@
 
 <script>
 import shopItemCard from '@/components/shopItemCard.vue';
+import store from '@/store';
+import { getCart } from '@/api/getData';
 
 //实例化一个 频道实例
 var channel = new BroadcastChannel('cart');
@@ -72,12 +74,19 @@ export default {
         return{
             allCheck:true, //全选状态
             allCheckState:true,
-            myCart:[1,2,777],
+            myCart:[],
             totalPrice:0,
             checkedCount:0
         }
     },
+    async created(){
+        this.getCart()
+    },
     methods:{
+        async getCart(){
+            const myCart = await getCart({user_id:store.state.userId}); 
+            this.myCart = myCart.data
+        },
         //全选状态切换
          allCheckChangeHandler(){
             
@@ -107,6 +116,9 @@ export default {
         stateHandler(price,checkCount){
             this.totalPrice += price
             this.checkedCount += checkCount
+        },
+        refresh(){
+            this.getCart()
         }
     },
 

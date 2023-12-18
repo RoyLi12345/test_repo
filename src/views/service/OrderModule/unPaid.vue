@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content">
     待支付
   </div>
 </template>
@@ -10,6 +10,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss"> 
 
 </style>

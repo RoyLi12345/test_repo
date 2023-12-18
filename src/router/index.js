@@ -48,16 +48,10 @@ const routes = [
         component: () => import('../views/help.vue'),
       },
       {
-        path:'/goods',
+        path:'/goods/:id',
         name:'good',
         meta:['浏览商品中...'],
         component:()=>import('../views/goods.vue')
-      },
-      {
-        path:'/deliverySearch',
-        name:'deliverySearch',
-        meta:['物流查询'],
-        component:()=>import('../views/deliverySearch.vue')
       },
       {
         path:'/itemCategory',
@@ -157,6 +151,12 @@ const routes = [
             name: '_call',
             meta:['上一次对话'],
             component: () => import('../views/customerService/_call.vue'),
+          },
+          {
+            path:'/deliverySearch',
+            name:'deliverySearch',
+            meta:['物流查询'],
+            component:()=>import('../views/deliverySearch.vue')
           },
         ]
       }

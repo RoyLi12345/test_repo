@@ -43,6 +43,7 @@ import { mapMutations, mapState } from 'vuex'
 import { logOutHandler } from '@/utils/commonFunc'
 import router from '@/router'
 export default {
+    name:'service',
     mixins:[logOutHandler],
     data(){
         return{

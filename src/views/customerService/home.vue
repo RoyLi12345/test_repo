@@ -35,7 +35,7 @@
 
 
     <!-- 选择后对应的模块 -->
-    <keep-alive include="call">
+    <keep-alive include="call,deliverySearch">
         <router-view></router-view>
     </keep-alive>
     

@@ -1,8 +1,12 @@
 <template>
     
     <!-- 联系客服 页面 -->
-  <div class="content">
+    <!-- key能让这个div里面的东西强制重新渲染 key += 1 只要做个更新操作 -->
+  <div class="content" :key="componentKey">
+        <el-button type="danger"  @click="destroyHandler" plain>结束对话</el-button>
+ <div>
 
+    </div>
     <div class="check">
         <el-button type="danger" v-if="dialogContent!=''" @click="previousDialog" plain>上一次对话👉</el-button>
     </div>
@@ -30,6 +34,7 @@
     </div>
     <!--  -->
 
+
     
 
   </div>
@@ -49,7 +54,7 @@ export default {
     name:'call',
     data(){
         return{
-            currentState:'', 
+            componentKey:0,
             questionList:[
                 {
                     id:1,
@@ -112,8 +117,11 @@ export default {
         question,
         answer
     },
+    activated(){
+
+    },
     mounted(){
-        this.currentState = this.$refs.dialogContent.innerHTML
+      
     },
     computed:{
         ...mapState(['dialogContent'])
@@ -122,12 +130,17 @@ export default {
 
         previousDialog(){
             router.push('/customerService/_call')
+        },
+
+        destroyHandler(){
+
+            store.commit('updateDialogContent',this.$refs.dialogContent.innerHTML) 
+            this.componentKey += 1
+            router.back()
+
         }
+        
 
-    },
-    beforeDestroy(){
-
-        store.commit('updateDialogContent',this.$refs.dialogContent.innerHTML) 
     }
 
 }
